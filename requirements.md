@@ -1,9 +1,36 @@
-# FitDash Mini Requirements
+# 요구사항 (간략)
 
-- **Platform:** iOS app built with Swift + SwiftUI.
-- **HealthKit Access:** Request permission for `HKWorkoutActivityType.running` and read running workouts.
-- **Run Session List:** Show each run with date, distance (km), and average pace (sec/km).
-- **Calendar View:** Monthly calendar highlighting days with running distance totals.
-- **Core Models:** `RunSession` (date, distanceMeters, durationSeconds, pace calculation) and `RunDay` (day-level aggregation).
-- **Managers:** `HealthKitManager` handles authorization and workout fetching.
-- **Target User:** Solo user (the owner) reviewing personal Apple Health running data.
+이 문서는 FitDash mini의 핵심 요구사항과 필수 참고사항을 간단히 정리합니다. 세부적인 파일·함수별 가이드와 아키텍처 참고는 `.github/copilot-instructions.md`를 참고하세요 (중복 기재 금지).
+
+## 요구사항
+
+- 플랫폼: iOS (Swift + SwiftUI)
+- HealthKit: `HKWorkoutActivityType.running` 권한 요청 및 러닝 워크아웃 읽기
+
+### 뷰
+
+- 런 세션 목록: 각 세션의 날짜, 거리(킬로미터), 평균 페이스(초/킬로미터) 표시
+- 캘린더 뷰: 월별 달력에서 일별 누적 달리기 거리 표시
+
+#### 히트맵 뷰 (GitHub 스타일 — 세로 배치)
+
+- 연간 그리드 히트맵을 세로로 배치한 뷰
+- 연단위 블록으로 표현되는 히트맵 뷰
+- 셀은 연단위(한 덩어리)로 배치됩니다 — 월별로 셀이 분리되어 있지 않습니다.
+- 화면에는 주(7일)가 세로로 배치된 그리드가 연속적으로 표시되며 세로 스크롤로 탐색합니다.
+- 각 날짜는 `RunDay`와 매핑된 정사각형 셀로 표시되고, 색상은 해당 날짜의 총 러닝 거리(km)에 따라 결정됩니다. 예: 0 km = 빈 셀, 1–5 km = 연한 색, 5 km 이상 = 진한 색.
+- 월 표시는 해당 월이 시작하는 날짜가 포함된 행의 왼쪽(행 레이블 영역)에 작게 붙여 표시합니다. 월 레이블의 높이는 셀의 세로 높이를 넘지 않도록 작게 표시합니다.
+- 각 월 표기 아래에 그 월의 총 달린 거리를 표시합니다. (월 표기와 함께 표시)
+- 각 행(한 주 묶음)의 오른쪽에는 그 행에 속한 날짜들의 거리 합계를 표시합니다(행 합계).
+- 뷰가 열리면 화면은 자동으로 ‘오늘’ 위치로 스크롤됩니다.
+
+### 모델 및 매니저
+
+- 핵심 모델: `RunSession`, `RunDay` (일 단위 집계)
+- 매니저: `HealthKitManager`가 권한/조회 책임
+
+## 필수 참고사항
+
+- 세부 구현, 파일/함수 가이드, 운영/테스트 팁은 `.github/copilot-instructions.md`에 정리되어 있으니 반드시 먼저 확인하세요.
+- 시뮬레이터는 실제 HealthKit 데이터가 제한적이므로 개발·프리뷰는 `MockHealthKitManager` 사용 권장.
+- HealthKit 권한은 필요한 항목만 요청하고, ContentView의 한 번만 인증 로직을 유지하세요.
