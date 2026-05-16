@@ -116,3 +116,9 @@
 - 목 데이터는 `fitdash/Resources/`의 JSON 파일을 사용한다.
 - 앱 아이콘과 색상은 `Assets.xcassets/`에서 관리한다.
 
+## 8. TestFlight 배포 운영
+
+- TestFlight 배포 작업은 `testflight-local-deploy` 브랜치에서 수행한다.
+- 배포 시작 전 `testflight-local-deploy` 브랜치로 이동한 뒤 최신 `dev` 브랜치 내용을 반영한다.
+- 배포 중 발견한 스크립트 문제, 코드서명 이슈 대응, 배포 문서 수정은 같은 브랜치에서 이어서 처리한다.
+- 배포 작업이 끝나도 일반 기능 개발 브랜치와 배포 브랜치의 책임은 분리해서 유지한다.
