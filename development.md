@@ -67,6 +67,9 @@
   - 날짜 단위로 세션을 그룹화한 모델
 - `RunSessionDayDetails`
   - 특정 날짜의 세션 필터링과 총 거리 계산용 보조 로직
+- `YearShareSnapshot`
+  - 선택 연도의 공유용 총합/일별 거리 스냅샷
+  - 공유 이미지 렌더링 입력 모델
 
 ### 3.5 화면 구성
 
@@ -75,10 +78,17 @@
   - 히트맵 레이아웃
   - 날짜 상세 오버레이
   - 로딩 및 새로고침 상태 표현
+  - 공유 버튼 상태 제어와 미리보기 시트 진입
 - `RunHeatmapCell`
   - 개별 날짜 셀 렌더링
 - `YearHeatmapData`
   - 연간 히트맵의 주 단위 행 데이터 생성
+- `YearShareCardView`
+  - 공유용 정적 히트맵 카드 렌더링
+- `YearSharePreviewSheet`
+  - 공유 이미지 렌더링 결과 미리보기와 시스템 공유 시트 호출
+- `ShareSheet`
+  - `UIActivityViewController` 브리지
 - `RunHeatmapFormatters`
   - 거리, 페이스, 날짜 문자열 포맷
 - `RunHeatmapHelpers`
@@ -95,6 +105,9 @@
 5. `RunHeatmapView`가 날짜별/연도별 집계
 6. `YearHeatmapData`가 주 단위 그리드 생성
 7. 셀 렌더링과 오버레이 표시
+8. 공유 요청 시 `YearShareSnapshot` 생성
+9. `YearShareCardView`를 `ImageRenderer`로 이미지화
+10. `YearSharePreviewSheet`와 시스템 공유 시트 표시
 
 ## 5. 개발 환경 규칙
 
