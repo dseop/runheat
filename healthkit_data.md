@@ -72,7 +72,7 @@ watchOS 9 및 iOS 16 이상에서 지원되는 전문적인 러닝 분석 데이
   - `startDate`, `endDate` (Date) 그대로 유지.
 
 ### 4단계: 데이터 집계 및 저장 (Aggregation)
-- **역할**: 개별 `RunSession`들을 일자별(`RunDay`) 또는 연도별(`YearHeatmapData`)로 묶어 히트맵 데이터를 생성.
+- **역할**: 개별 `RunSession`들을 일자별(`RunDay`) 또는 기간별(`HeatmapDisplayData`)로 묶어 히트맵 데이터를 생성.
 - **코드**: `RunHeatmapView`에서 사용할 수 있도록 캘린더 계산기를 사용하여 날짜별 거리 합계를 산출.
 
 ### 5단계: UI 렌더링

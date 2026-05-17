@@ -67,9 +67,11 @@
   - 날짜 단위로 세션을 그룹화한 모델
 - `RunSessionDayDetails`
   - 특정 날짜의 세션 필터링과 총 거리 계산용 보조 로직
-- `YearShareSnapshot`
-  - 선택 연도의 공유용 총합/일별 거리 스냅샷
+- `HeatmapSnapshot`
+  - `연/월/주` 기간의 공유용 총합/일별 거리 스냅샷
   - 공유 이미지 렌더링 입력 모델
+- `HeatmapSnapshotFactory`
+  - 기간별 스냅숏 생성과 공유 가능 범위 계산
 
 ### 3.5 화면 구성
 
@@ -78,14 +80,14 @@
   - 히트맵 레이아웃
   - 날짜 상세 오버레이
   - 로딩 및 새로고침 상태 표현
-  - 공유 버튼 상태 제어와 미리보기 시트 진입
+  - 연/월/주 합계 탭 기반 스냅숏 공유 진입
 - `RunHeatmapCell`
   - 개별 날짜 셀 렌더링
-- `YearHeatmapData`
-  - 연간 히트맵의 주 단위 행 데이터 생성
-- `YearShareCardView`
+- `HeatmapDisplayData`
+  - 범용 기간의 주 단위 히트맵 행 데이터 생성
+- `HeatmapSnapshotCardView`
   - 공유용 정적 히트맵 카드 렌더링
-- `YearSharePreviewSheet`
+- `HeatmapSnapshotPreviewSheet`
   - 공유 이미지 렌더링 결과 미리보기와 시스템 공유 시트 호출
 - `ShareSheet`
   - `UIActivityViewController` 브리지
@@ -103,11 +105,11 @@
 3. `HealthKitManager`가 러닝 워크아웃 조회
 4. `RunSession` 배열 생성
 5. `RunHeatmapView`가 날짜별/연도별 집계
-6. `YearHeatmapData`가 주 단위 그리드 생성
+6. `HeatmapDisplayData`가 주 단위 그리드 생성
 7. 셀 렌더링과 오버레이 표시
-8. 공유 요청 시 `YearShareSnapshot` 생성
-9. `YearShareCardView`를 `ImageRenderer`로 이미지화
-10. `YearSharePreviewSheet`와 시스템 공유 시트 표시
+8. 공유 요청 시 `HeatmapSnapshotFactory`가 기간 스냅숏 생성
+9. `HeatmapSnapshotCardView`를 `ImageRenderer`로 이미지화
+10. `HeatmapSnapshotPreviewSheet`와 시스템 공유 시트 표시
 
 ## 5. 개발 환경 규칙
 
@@ -121,7 +123,7 @@
 - 요구사항 변경 시 `docs/requirements.md`와 함께 정합성을 확인한다.
 - 화면 구조 변경 시 `PROJECT_STRUCTURE.md`와 이 문서를 같이 갱신한다.
 - HealthKit 데이터 형태가 바뀌면 `Managers`와 `Models`를 먼저 확인한다.
-- 히트맵 레이아웃 변경은 `Views/RunHeatmapView.swift`와 `YearHeatmapData.swift`를 함께 본다.
+- 히트맵 레이아웃 변경은 `Views/RunHeatmapView.swift`와 `HeatmapDisplayData.swift`를 함께 본다.
 
 ## 7. 테스트와 리소스
 
