@@ -7,6 +7,7 @@
 - `requirements.md`: 제품/화면 요구사항의 단일 기준 문서
 - `planning.md`: 제품 방향과 사용자 흐름 요약
 - `development.md`: 코드 구조, 핵심 타입, 유지보수 포인트
+- `maintenance.md`: 개발 현황 파악과 문서 정리 체크리스트
 - `healthkit_data.md`: HealthKit 러닝 데이터 필드와 조회 파이프라인 참고
 
 ## 기능 계획
