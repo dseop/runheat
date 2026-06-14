@@ -1,7 +1,6 @@
 # FitDash 개발 문서
 
-이 문서는 `PROJECT_STRUCTURE.md`를 바탕으로 정리한 개발 기준 문서입니다.  
-프로젝트의 디렉터리 책임, 핵심 타입, 데이터 흐름, 유지보수 포인트를 빠르게 파악하기 위한 용도입니다.
+이 문서는 프로젝트의 디렉터리 책임, 핵심 타입, 데이터 흐름, 유지보수 포인트를 빠르게 파악하기 위한 개발 기준 문서입니다.
 
 ## 1. 기술 스택
 
@@ -121,7 +120,7 @@
 ## 6. 유지보수 포인트
 
 - 요구사항 변경 시 `docs/requirements.md`와 함께 정합성을 확인한다.
-- 화면 구조 변경 시 `PROJECT_STRUCTURE.md`와 이 문서를 같이 갱신한다.
+- 화면 구조 변경 시 이 문서와 `docs/requirements.md`의 정합성을 함께 확인한다.
 - HealthKit 데이터 형태가 바뀌면 `Managers`와 `Models`를 먼저 확인한다.
 - 히트맵 레이아웃 변경은 `Views/RunHeatmapView.swift`와 `HeatmapDisplayData.swift`를 함께 본다.
 
