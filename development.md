@@ -63,6 +63,10 @@
 - `RunDataAggregator`
   - HealthKit 기록과 로컬 보강 기록을 병합
   - 출처 ID 또는 시작 시각/거리/시간 근접값으로 중복 기록을 제거
+- `StravaBulkExportImporter`
+  - Strava Bulk Export의 `activities.csv`를 읽어 Run 계열 활동만 `RunRecord(source: .strava)`로 변환
+  - 중복 CSV 컬럼과 `Moving Time`/`Elapsed Time` fallback을 처리
+  - 현재 단계에서는 GPX 경로 파일을 파싱하지 않음
 
 ### 3.4 도메인 모델
 
@@ -97,6 +101,7 @@
   - 날짜 상세 오버레이
   - 로딩 및 새로고침 상태 표현
   - 연/월/주 합계 탭 기반 스냅숏 공유 진입
+  - 개발 빌드에서 Strava `activities.csv` import 진입 제공
 - `RunHeatmapCell`
   - 개별 날짜 셀 렌더링
 - `HeatmapDisplayData`
