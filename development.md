@@ -62,7 +62,8 @@
   - HealthKit 전체 데이터 복제 용도가 아니라 보강 기록 저장 용도
 - `RunDataAggregator`
   - HealthKit 기록과 로컬 보강 기록을 병합
-  - 출처 ID 또는 시작 시각/거리/시간 근접값으로 중복 기록을 제거
+  - 출처 ID 또는 시작 시각/거리/시간 근접값으로 같은 러닝을 `RunGroup`으로 묶음
+  - 같은 러닝으로 묶인 여러 source는 집계에 중복 반영하지 않고 대표 기록만 사용하며, source별 값은 상세 비교용으로 유지
 - `StravaBulkExportImporter`
   - Strava Bulk Export의 `activities.csv`를 읽어 Run 계열 활동만 `RunRecord(source: .strava)`로 변환
   - 중복 CSV 컬럼과 `Moving Time`/`Elapsed Time` fallback을 처리
@@ -80,6 +81,7 @@
 - `RunRecord`
   - 여러 출처의 러닝 기록을 정규화한 내부 모델
   - `RunSource`, 외부 ID, 시작/종료 시각, 거리, 시간, 상세 지표, 생성/수정 시각 포함
+  - 향후 source별 값 비교를 위해 같은 러닝의 원본 기록들을 보존하는 모델의 기반
 - `RunSource`
   - `appleHealth`, `strava`, `garminFile`, `manualImport` 출처 구분
   - 사용자 표시 목적보다 중복 제거와 재가져오기 추적을 위한 메타데이터

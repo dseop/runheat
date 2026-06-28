@@ -46,7 +46,7 @@
   - 카드 위치 정책: 가능한 경우 셀 위쪽에 노출하고, 위쪽 공간이 부족하면 셀 아래쪽에 노출합니다.
   - 카드 닫기 정책: 현재 선택된 날짜 셀을 다시 탭하면 카드가 닫힙니다.
   - 오버레이 헤더: 선택 날짜
-  - 오버레이 본문: 해당 날짜 세션 목록(시작 시각, 거리 km, 페이스 /km)
+  - 오버레이 본문: 해당 날짜 세션 목록(시작 시각, 거리 km, 페이스 /km, 데이터 출처)
   - 오버레이 요약: 총 거리, 세션 수
   - 해당 날짜 러닝이 없으면 빈 상태 문구를 표시합니다.
   - 오버레이가 열린 상태에서도 다른 날짜 셀을 연속 터치해 내용을 즉시 전환할 수 있습니다.
@@ -79,11 +79,14 @@
   - 현재 화면은 모든 상세 필드를 즉시 표시하지 않아도 되며, 기존 히트맵/목록 표시는 기본 거리/시간 데이터를 우선 사용합니다.
 - 내부 보강 모델: `RunRecord`, `RunSource`
   - 화면 표시 전 여러 출처의 러닝 데이터를 `RunRecord`로 정규화하고, 기존 UI에는 `RunSession` 형태로 전달합니다.
+  - `RunSession`은 대표 데이터 출처(`source`)와 상세 비교용 source별 값(`sourceDetails`)을 유지합니다.
+  - 같은 러닝이 여러 source에 존재하면 집계와 공유에는 대표 기록 하나만 사용하고, 상세 오버레이에서는 source별 시작 시각, 거리, 페이스를 함께 표시합니다.
   - Apple Health에 없는 외부/import 기록은 RunHeat 로컬 저장소에 보관할 수 있습니다.
   - HealthKit에는 계속 읽기 전용으로 접근하며, 외부/import 기록을 Apple Health에 쓰지 않습니다.
 - Strava Bulk Export import
   - 개발 빌드에서는 Strava export archive를 풀어서 나온 `activities.csv`를 선택해 가져올 수 있습니다.
   - CSV의 `Activity ID`, `Activity Date`, `Activity Type`, `Distance`, `Moving Time`/`Elapsed Time`을 `RunRecord(source: .strava)`로 변환합니다.
+  - Strava Bulk Export의 `Activity Date`는 UTC(+0) 기준으로 해석하고, 화면 표시는 기기 로컬 시간대에 따릅니다.
   - `Activity Type`이 Run 계열인 행만 가져오고, 현재 단계에서는 `Filename`으로 연결되는 GPX 경로 파일은 파싱하지 않습니다.
 - 공유 표시 모델: `HeatmapSnapshot` (`연/월/주` 기간의 공유용 합계/일별 거리 스냅숏)
 - 매니저: `HealthKitManager`가 권한/조회와 HealthKit 결과 + 로컬 보강 기록 병합 책임
