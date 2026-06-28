@@ -53,15 +53,32 @@
   - 실제 HealthKit 조회 담당
   - 러닝 워크아웃만 필터링
   - 초기 로딩 상태와 오류 상태를 관리
+  - HealthKit 조회 결과와 RunHeat 로컬 보강 기록을 병합하여 기존 `RunSession` 인터페이스로 제공
 - `MockHealthKitManager`
   - 시뮬레이터용 목 데이터 제공자
   - UI 미리보기와 개발 검증용
+- `JSONRunRecordStore`
+  - Apple Health에 없는 외부/import 러닝 기록을 보관하는 로컬 JSON 저장소
+  - HealthKit 전체 데이터 복제 용도가 아니라 보강 기록 저장 용도
+- `RunDataAggregator`
+  - HealthKit 기록과 로컬 보강 기록을 병합
+  - 출처 ID 또는 시작 시각/거리/시간 근접값으로 중복 기록을 제거
 
 ### 3.4 도메인 모델
 
 - `RunSession`
   - 러닝 세션 단위 데이터
   - 시작/종료 시각, 거리, 시간, 페이스 계산 포함
+  - 화면과 공유 기능이 사용하는 표시용 모델
+  - 상세 데이터 확장을 위해 이동 시간, 전체 시간, 고도 상승, 평균/최대 심박, 경로 좌표를 선택 필드로 보관
+- `RunRoutePoint`
+  - 경로 지도 렌더링을 위한 위도/경도, 선택 고도, 선택 시각 좌표 모델
+- `RunRecord`
+  - 여러 출처의 러닝 기록을 정규화한 내부 모델
+  - `RunSource`, 외부 ID, 시작/종료 시각, 거리, 시간, 상세 지표, 생성/수정 시각 포함
+- `RunSource`
+  - `appleHealth`, `strava`, `garminFile`, `manualImport` 출처 구분
+  - 사용자 표시 목적보다 중복 제거와 재가져오기 추적을 위한 메타데이터
 - `RunDay`
   - 날짜 단위로 세션을 그룹화한 모델
 - `RunSessionDayDetails`

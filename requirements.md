@@ -75,8 +75,14 @@
 ### 모델 및 매니저
 
 - 핵심 모델: `RunSession`, `RunDay` (일 단위 집계)
+  - `RunSession`은 기본 표시 데이터(시작/종료 시각, 거리, 시간)와 함께 향후 상세 화면용 선택 데이터(이동 시간, 전체 시간, 고도 상승, 평균/최대 심박, 경로 좌표)를 담을 수 있습니다.
+  - 현재 화면은 모든 상세 필드를 즉시 표시하지 않아도 되며, 기존 히트맵/목록 표시는 기본 거리/시간 데이터를 우선 사용합니다.
+- 내부 보강 모델: `RunRecord`, `RunSource`
+  - 화면 표시 전 여러 출처의 러닝 데이터를 `RunRecord`로 정규화하고, 기존 UI에는 `RunSession` 형태로 전달합니다.
+  - Apple Health에 없는 외부/import 기록은 RunHeat 로컬 저장소에 보관할 수 있습니다.
+  - HealthKit에는 계속 읽기 전용으로 접근하며, 외부/import 기록을 Apple Health에 쓰지 않습니다.
 - 공유 표시 모델: `HeatmapSnapshot` (`연/월/주` 기간의 공유용 합계/일별 거리 스냅숏)
-- 매니저: `HealthKitManager`가 권한/조회 책임
+- 매니저: `HealthKitManager`가 권한/조회와 HealthKit 결과 + 로컬 보강 기록 병합 책임
 
 ### Out of scope
 
@@ -89,6 +95,8 @@
 - 시뮬레이터는 실제 HealthKit 데이터가 제한적이므로 개발 중에는 `MockHealthKitManager` 사용을 권장합니다.
   - 시뮬레이터 환경에서는 `Resources/` 폴더 내의 `running_workouts_*.json` 파일을 불러와 실제 데이터와 유사한 환경을 시뮬레이션합니다.
 - HealthKit 권한은 필요한 항목만 요청하고, ContentView의 한 번만 인증 로직을 유지하세요.
+- RunHeat 로컬 저장소는 Apple Health에 없는 외부/import 기록과 중복 제거용 메타데이터를 보관하는 보조 저장소입니다. HealthKit 전체 데이터를 복제하는 저장소로 사용하지 않습니다.
+- 현재 HealthKit 읽기 권한은 `HKObjectType.workoutType()`만 요청하므로, 경로 좌표/심박/고도 등 상세 필드는 외부/import 데이터 또는 향후 별도 권한 확장 전까지 비어 있을 수 있습니다.
 - **데이터 내보내기 및 테스트용 자료:** 
   - 개발 빌드(`#if DEBUG`)에서만 내보내기 버튼이 노출되며, 현재 연도의 데이터를 JSON으로 내보낼 수 있습니다.
   - 내보낸 데이터에는 구간 페이스 계산을 위한 위치 데이터(`locations`)가 포함됩니다.
