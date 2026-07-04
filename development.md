@@ -67,7 +67,13 @@
 - `StravaBulkExportImporter`
   - Strava Bulk Export의 `activities.csv`를 읽어 Run 계열 활동만 `RunRecord(source: .strava)`로 변환
   - 중복 CSV 컬럼과 `Moving Time`/`Elapsed Time` fallback을 처리
+  - UTF-8/CSV 입력 자체가 성립하지 않으면 error를 던지고, 유효한 CSV에서 변환할 수 없는 행은 skipped row로 집계
   - 현재 단계에서는 GPX 경로 파일을 파싱하지 않음
+- `GarminBulkExportImporter`
+  - Garmin Bulk Export의 `*_summarizedActivities.json`을 읽어 Run 계열 활동만 `RunRecord(source: .garminFile)`로 변환
+  - `startTimeGmt`는 epoch milliseconds, `distance`/`elevationGain`은 centimeters, duration 계열 값은 milliseconds로 해석해 공통 모델 단위로 정규화
+  - Garmin summary JSON 입력 자체가 성립하지 않으면 error를 던지고, 유효한 JSON에서 변환할 수 없는 활동은 skipped row로 집계
+  - 현재 단계에서는 `UploadedFiles_*.zip` 안의 FIT 경로 파일을 파싱하지 않음
 
 ### 3.4 도메인 모델
 
@@ -103,7 +109,7 @@
   - 날짜 상세 오버레이
   - 로딩 및 새로고침 상태 표현
   - 연/월/주 합계 탭 기반 스냅숏 공유 진입
-  - 개발 빌드에서 Strava `activities.csv` import 진입 제공
+  - 개발 빌드에서 Strava `activities.csv`와 Garmin `*_summarizedActivities.json` import 진입 제공
 - `RunHeatmapCell`
   - 개별 날짜 셀 렌더링
 - `HeatmapDisplayData`

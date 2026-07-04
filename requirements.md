@@ -81,6 +81,8 @@
   - 화면 표시 전 여러 출처의 러닝 데이터를 `RunRecord`로 정규화하고, 기존 UI에는 `RunSession` 형태로 전달합니다.
   - `RunSession`은 대표 데이터 출처(`source`)와 상세 비교용 source별 값(`sourceDetails`)을 유지합니다.
   - 같은 러닝이 여러 source에 존재하면 집계와 공유에는 대표 기록 하나만 사용하고, 상세 오버레이에서는 source별 시작 시각, 거리, 페이스를 함께 표시합니다.
+  - 같은 러닝 여부는 시작 시각과 거리 유사성으로 판단하며, duration은 소스별 차이가 날 수 있으므로 병합 조건으로 사용하지 않습니다.
+  - 시작 시각과 거리는 유사하지만 duration이 비정상적으로 긴 source는 오래 켜진 기록으로 보고 대표값 후보에서 밀어냅니다.
   - Apple Health에 없는 외부/import 기록은 RunHeat 로컬 저장소에 보관할 수 있습니다.
   - HealthKit에는 계속 읽기 전용으로 접근하며, 외부/import 기록을 Apple Health에 쓰지 않습니다.
 - Strava Bulk Export import
@@ -88,6 +90,12 @@
   - CSV의 `Activity ID`, `Activity Date`, `Activity Type`, `Distance`, `Moving Time`/`Elapsed Time`을 `RunRecord(source: .strava)`로 변환합니다.
   - Strava Bulk Export의 `Activity Date`는 UTC(+0) 기준으로 해석하고, 화면 표시는 기기 로컬 시간대에 따릅니다.
   - `Activity Type`이 Run 계열인 행만 가져오고, 현재 단계에서는 `Filename`으로 연결되는 GPX 경로 파일은 파싱하지 않습니다.
+  - 파일을 읽지 못하거나 CSV 입력으로 성립하지 않으면 실패 alert를 표시하고, CSV는 유효하지만 가져올 수 없는 행은 skipped row로 집계합니다.
+- Garmin Bulk Export import
+  - 개발 빌드에서는 Garmin export의 `DI_CONNECT/DI-Connect-Fitness/*_summarizedActivities.json` 파일을 선택해 가져올 수 있습니다.
+  - JSON의 `activityId`, `activityType`/`sportType`, `startTimeGmt`, `distance`, `duration`/`movingDuration`/`elapsedDuration`, `avgHr`, `maxHr`, `elevationGain`을 `RunRecord(source: .garminFile)`로 변환합니다.
+  - `activityType`/`sportType`이 Run 계열인 활동만 가져오고, 현재 단계에서는 `UploadedFiles_*.zip` 안의 FIT 경로 파일은 파싱하지 않습니다.
+  - 파일을 읽지 못하거나 Garmin summary JSON 입력으로 성립하지 않으면 실패 alert를 표시하고, JSON은 유효하지만 가져올 수 없는 활동은 skipped row로 집계합니다.
 - 공유 표시 모델: `HeatmapSnapshot` (`연/월/주` 기간의 공유용 합계/일별 거리 스냅숏)
 - 매니저: `HealthKitManager`가 권한/조회와 HealthKit 결과 + 로컬 보강 기록 병합 책임
 
@@ -106,7 +114,7 @@
 - 현재 HealthKit 읽기 권한은 `HKObjectType.workoutType()`만 요청하므로, 경로 좌표/심박/고도 등 상세 필드는 외부/import 데이터 또는 향후 별도 권한 확장 전까지 비어 있을 수 있습니다.
 - **데이터 내보내기 및 테스트용 자료:** 
   - 개발 빌드(`#if DEBUG`)에서만 내보내기 버튼이 노출되며, 현재 연도의 데이터를 JSON으로 내보낼 수 있습니다.
-  - 개발 빌드(`#if DEBUG`)에서만 Strava `activities.csv` import 버튼이 노출됩니다.
+  - 개발 빌드(`#if DEBUG`)에서만 Strava `activities.csv` import 버튼과 Garmin `*_summarizedActivities.json` import 버튼이 노출됩니다.
   - 내보낸 데이터에는 구간 페이스 계산을 위한 위치 데이터(`locations`)가 포함됩니다.
   - 내보낸 데이터는 개발 및 테스트를 위해 프로젝트 `Resources/`에 추가하여 Mock 데이터로 활용할 수 있습니다.
   - 출시용 빌드(Release)에는 내보내기 기능 및 관련 테스트용 리소스가 포함되지 않도록 관리합니다.

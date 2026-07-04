@@ -16,8 +16,11 @@
 flowchart LR
   AH["Apple Health HKWorkout"] --> AHR["RunRecord(source: appleHealth)"]
   CSV["Strava activities.csv"] --> SI["StravaBulkExportImporter"]
+  GJSON["Garmin summarizedActivities.json"] --> GI["GarminBulkExportImporter"]
   SI --> SR["RunRecord(source: strava)"]
+  GI --> GR["RunRecord(source: garminFile)"]
   SR --> STORE["JSONRunRecordStore"]
+  GR --> STORE
   AHR --> AGG["RunDataAggregator"]
   STORE --> AGG
   AGG --> GROUP["RunGroup / canonical run"]
@@ -93,6 +96,51 @@ flowchart TD
 
 현재 import는 `activities.csv`만 처리합니다. `Filename`으로 연결되는 GPX 경로 파일은 아직 파싱하지 않습니다. Strava Bulk Export의 `Activity Date`는 UTC(+0) 기준으로 해석하고, 화면 표시는 기기 로컬 시간대에 따릅니다.
 
+## Garmin Bulk Export Import
+
+```mermaid
+flowchart TD
+  ZIP["Garmin Bulk Export zip"] --> UNZIP["User unzips archive"]
+  UNZIP --> JSON["Select *_summarizedActivities.json in DEBUG build"]
+  JSON --> PARSE["Parse summarizedActivitiesExport rows"]
+  PARSE --> FILTER{"activityType/sportType is Run-like?"}
+  FILTER -- "No" --> SKIP["Skip row"]
+  FILTER -- "Yes" --> MAP["Map to RunRecord(source: garminFile)"]
+  MAP --> UNITS["Normalize epoch ms, cm, and ms units"]
+  UNITS --> UPSERT["Upsert by source + activityId"]
+  UPSERT --> REFRESH["Refresh merged sessions"]
+```
+
+현재 Garmin import는 `DI_CONNECT/DI-Connect-Fitness/*_summarizedActivities.json`만 처리합니다. `UploadedFiles_*.zip` 안의 FIT 원본 파일은 아직 파싱하지 않으므로 전체 경로와 record-level timestamp는 사용하지 않습니다.
+
+## Import 실패와 skip 처리
+
+```mermaid
+flowchart TD
+  STRAVA["Import Strava"] --> SPICKER["Select csv/plainText file"]
+  GARMIN["Import Garmin"] --> GPICKER["Select json/plainText file"]
+  SPICKER --> SREAD{"File readable?"}
+  GPICKER --> GREAD{"File readable?"}
+  SREAD -- "No" --> SFAIL["Strava import failed"]
+  GREAD -- "No" --> GFAIL["Garmin import failed"]
+  SREAD -- "Yes" --> SPARSE["StravaBulkExportImporter"]
+  GREAD -- "Yes" --> GPARSE["GarminBulkExportImporter"]
+  SPARSE --> SVALID{"Valid CSV input?"}
+  GPARSE --> GVALID{"Valid Garmin summary JSON?"}
+  SVALID -- "No" --> SFAIL
+  GVALID -- "No" --> GFAIL
+  SVALID -- "Yes" --> SROWS["Map run-like rows"]
+  GVALID -- "Yes" --> GROWS["Map run-like activities"]
+  SROWS --> SDONE["Complete with imported/skipped counts"]
+  GROWS --> GDONE["Complete with imported/skipped counts"]
+```
+
+Strava와 Garmin import는 각각 다른 파일 선택 타입과 파서를 사용합니다. Strava는 `activities.csv`를 기대하고, Garmin은 `*_summarizedActivities.json`을 기대합니다.
+
+파일을 읽지 못하거나 파서 입력으로 성립하지 않으면 실패 alert를 표시합니다. 반대로 파일은 파싱됐지만 러닝이 아니거나 필수 필드가 부족한 행/활동은 실패가 아니라 skipped row로 집계합니다.
+
+현재 구현에서는 유효한 파일이지만 가져올 수 있는 러닝이 0건인 경우에도 `0 runs imported, N rows skipped` 형태의 완료 alert가 표시될 수 있습니다. 향후 UX 보강 시 `importedCount == 0`인 import 결과를 별도 경고로 보여줄 수 있습니다.
+
 ## 병합 및 중복 제거
 
 ```mermaid
@@ -110,13 +158,20 @@ flowchart TD
   SEPARATE --> TOTALS
 ```
 
-`identityKey`는 `source + externalID`입니다. 같은 Strava `Activity ID`를 다시 import하면 로컬 저장소에서 같은 기록을 교체합니다.
+`identityKey`는 `source + externalID`입니다. 같은 Strava `Activity ID`나 Garmin `activityId`를 다시 import하면 로컬 저장소에서 같은 source 기록을 교체합니다.
 
 서로 다른 출처 사이의 중복은 다음 근접 조건으로 판단합니다.
 
 - 시작 시각 차이 60초 이하
-- duration 차이 60초 이하
 - 거리 차이 `max(50m, 더 긴 거리의 2%)` 이하
+
+duration은 같은 러닝인지 판단하는 조건으로 쓰지 않습니다. 소스마다 종료 시각, 이동 시간, elapsed time 해석이 다를 수 있기 때문입니다.
+
+다만 앱을 여러 개 켜고 달린 뒤 하나를 끄지 않아 duration만 길어진 것으로 보이면 대표값 선택에서 해당 source를 밀어냅니다.
+
+- 시작 시각 차이 120초 이하
+- 거리 차이 `max(100m, 더 긴 거리의 3%)` 이하
+- 긴 duration이 짧은 duration보다 3분 이상 길거나, 짧은 duration의 1.1배 이상
 
 중복으로 판단되면 집계에 사용할 대표 기록을 하나 정합니다. 대표 출처 우선순위의 초기값은 다음과 같습니다.
 
@@ -128,6 +183,8 @@ flowchart LR
 ```
 
 따라서 Apple Health와 Strava에 같은 러닝이 있으면 히트맵 합계에는 Apple Health 기록만 반영합니다. Strava 기록은 같은 러닝의 보조 source로 보존되어야 하지만, 합계에는 더해지면 안 됩니다.
+
+오래 켜진 것으로 보이는 source는 대표값 후보에서 밀어냅니다. 예를 들어 거리와 시작 시각은 거의 같지만 `6.57km @ 6:42/km`와 `6.56km @ 5:48/km`처럼 duration이 벌어지면 더 짧은 duration 쪽을 대표값으로 둘 수 있습니다. 이때도 해당 source 값은 상세 비교용 `sourceDetails`에는 남깁니다.
 
 ## 대표값과 source별 값 정책
 
@@ -166,7 +223,7 @@ flowchart LR
 
 ## 현재 한계와 다음 확장
 
-- Strava CSV만 import하므로 route, GPX time, 시계열 심박은 아직 활용하지 않습니다.
+- Strava CSV와 Garmin summary JSON만 import하므로 route, GPX/FIT time, 시계열 심박은 아직 활용하지 않습니다.
 - 현재 구현은 source별 route, 심박 시계열 같은 고해상도 상세 비교는 아직 표시하지 않습니다.
 - 다음 구조 확장은 `RunGroup`의 필드별 신뢰 source 정책과 상세 화면의 source 비교 UI를 확장하는 방향이 자연스럽습니다.
-- GPX import를 추가하면 CSV `Activity Date`보다 GPX `<time>`을 우선 사용해 시간 정확도를 높일 수 있습니다.
+- GPX/FIT import를 추가하면 CSV/summary의 요약 시간보다 원본 파일의 record/session time을 우선 사용해 시간과 경로 정확도를 높일 수 있습니다.
