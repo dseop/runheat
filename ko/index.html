@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="RunHeat는 Apple 건강 앱의 달리기 워크아웃을 연간, 월간, 주간 히트맵으로 시각화합니다.">
+    <title>RunHeat</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <img src="../assets/app-icon.png" alt="">
+        <span>RunHeat</span>
+      </div>
+      <nav class="nav" aria-label="언어">
+        <label class="language-select">
+          <span>언어</span>
+          <select onchange="if (this.value) window.location.href = this.value">
+            <option value="../en/">English</option>
+            <option value="../ko/" selected>한국어</option>
+          </select>
+        </label>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Apple 건강 앱 기반 러닝 히트맵</p>
+          <h1>RunHeat</h1>
+          <p class="lead">
+            Apple 건강 앱에 저장된 달리기 워크아웃을 연간 히트맵으로 보고, 날짜별 세션과 공유용 기록 카드를 확인할 수 있습니다. RunHeat는 iOS에서만 사용할 수 있습니다.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="https://apps.apple.com/us/app/runheat/id6759232122?uo=4">App Store에서 보기</a>
+            <a class="button secondary" href="support.html">지원 및 개인정보</a>
+          </div>
+        </div>
+        <div class="phone-stage" aria-label="RunHeat 앱 미리보기">
+          <img class="phone-shot" src="../assets/screenshot-heatmap.png" alt="RunHeat 연간 러닝 히트맵 화면">
+        </div>
+      </section>
+
+      <section id="features" class="section">
+        <p class="eyebrow">주요 기능</p>
+        <h2>언제 얼마나 달렸는지 한눈에 확인하세요.</h2>
+        <div class="feature-grid">
+          <article class="feature">
+            <h3>연간 히트맵</h3>
+            <p>하루 단위 러닝 거리를 색상 강도로 표현해 한 해의 달리기 흐름을 빠르게 볼 수 있습니다.</p>
+          </article>
+          <article class="feature">
+            <h3>세션 상세</h3>
+            <p>날짜를 선택해 세션별 거리, 페이스, 시작 시각, 데이터 출처를 바로 확인할 수 있습니다.</p>
+          </article>
+          <article class="feature">
+            <h3>공유용 스냅샷</h3>
+            <p>연간, 월간, 주간 러닝 히트맵 카드를 만들어 러닝 기록을 깔끔하게 공유할 수 있습니다.</p>
+          </article>
+          <article class="feature">
+            <h3>iOS 전용</h3>
+            <p>RunHeat는 iPhone용 앱이며 Apple 건강 앱의 워크아웃 권한으로 기기 내 러닝 데이터를 읽습니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="screens" class="section gallery" aria-label="RunHeat 스크린샷">
+        <img src="../assets/screenshot-heatmap.png" alt="RunHeat 히트맵 화면">
+        <img src="../assets/screenshot-share.png" alt="RunHeat 공유 미리보기">
+      </section>
+
+      <section id="privacy" class="section privacy">
+        <div>
+          <p class="eyebrow">Privacy</p>
+          <h2>달리기 워크아웃 데이터에만 집중합니다.</h2>
+        </div>
+        <div>
+          <p>
+            RunHeat는 Apple 건강 앱의 워크아웃 읽기 권한만 요청하며 달리기 워크아웃 데이터만 사용합니다. 앱은 사용자의 러닝 기록을 확인하고 공유하는 기능에 집중합니다.
+          </p>
+          <p>
+            건강 데이터 권한은 iOS에서 관리되며, 사용자는 건강 앱 또는 설정에서 언제든지 접근 권한을 변경할 수 있습니다.
+          </p>
+          <p>
+            <a class="text-link" href="support.html">지원 및 개인정보 처리방침 전체 보기.</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>RunHeat는 iOS 전용 앱입니다. <a class="text-link" href="https://apps.apple.com/us/app/runheat/id6759232122?uo=4">App Store에서 보기</a></span>
+    </footer>
+  </body>
+</html>
