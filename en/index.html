@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="RunHeat visualizes Apple Health running workouts as yearly, monthly, and weekly heatmaps.">
+    <meta name="description" content="RunHeat brings together running records from Apple Health, Strava, and Garmin in yearly, monthly, and weekly heatmaps.">
     <title>RunHeat</title>
     <link rel="stylesheet" href="../styles.css">
   </head>
@@ -27,10 +27,10 @@
     <main>
       <section class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">Running heatmaps from Apple Health</p>
+          <p class="eyebrow">Apple Health, Strava, and Garmin in one heatmap</p>
           <h1>RunHeat</h1>
           <p class="lead">
-            Turn your Apple Health running workouts into a yearly heatmap, inspect daily sessions, and share clean snapshots of your running history. RunHeat is available for iOS only.
+            Bring together runs from Apple Health, Strava, and Garmin, explore your yearly heatmap and daily sessions, and share clean snapshots of your running history. RunHeat is available for iOS only.
           </p>
           <div class="actions">
             <a class="button primary" href="https://apps.apple.com/us/app/runheat/id6759232122?uo=4">View on the App Store</a>
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="phone-stage" aria-label="RunHeat app preview">
-          <img class="phone-shot" src="../assets/screenshot-heatmap.png" alt="RunHeat yearly running heatmap screen">
+          <img class="phone-shot" src="../assets/screenshots/en/00-welcome-promo.png" alt="RunHeat welcome screen showing a yearly running heatmap">
         </div>
       </section>
 
@@ -59,15 +59,33 @@
             <p>Create clean yearly, monthly, and weekly heatmap cards for sharing your running progress.</p>
           </article>
           <article class="feature">
-            <h3>iOS only</h3>
-            <p>RunHeat is built for iPhone and uses Apple Health workout permissions to read running data on-device.</p>
+            <h3>Strava & Garmin import</h3>
+            <p>Import running records from supported Bulk Export zip files. Overlapping runs are merged to avoid duplicate totals.</p>
           </article>
         </div>
       </section>
 
-      <section id="screens" class="section gallery" aria-label="RunHeat screenshots">
-        <img src="../assets/screenshot-heatmap.png" alt="RunHeat heatmap view">
-        <img src="../assets/screenshot-share.png" alt="RunHeat sharing preview">
+      <section id="screens" class="section screenshots" aria-labelledby="screens-title">
+        <p class="eyebrow">Inside RunHeat</p>
+        <h2 id="screens-title">Your running history, from import to insight.</h2>
+        <div class="gallery">
+          <figure>
+            <img src="../assets/screenshots/en/01-yearly-heatmap.png" alt="RunHeat yearly heatmap with year tabs and distance totals" loading="lazy">
+            <figcaption><strong>Yearly heatmap</strong><span>See your training pattern and distance totals at a glance.</span></figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/screenshots/en/02-bulk-import.png" alt="RunHeat Bulk Export import guide for Strava and Garmin" loading="lazy">
+            <figcaption><strong>Bulk Export import</strong><span>Choose a Strava or Garmin export zip directly from your device.</span></figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/screenshots/en/03-run-details.png" alt="RunHeat run details showing Apple Health and Strava sources" loading="lazy">
+            <figcaption><strong>Multi-source details</strong><span>Inspect sessions by date while overlapping records stay merged.</span></figcaption>
+          </figure>
+          <figure>
+            <img src="../assets/screenshots/en/04-share-preview.png" alt="RunHeat monthly heatmap share preview" loading="lazy">
+            <figcaption><strong>Share preview</strong><span>Preview yearly, monthly, and weekly cards before sharing.</span></figcaption>
+          </figure>
+        </div>
       </section>
 
       <section id="privacy" class="section privacy">
@@ -77,7 +95,7 @@
         </div>
         <div>
           <p>
-            RunHeat requests read-only access to workout records from Apple Health and uses running workouts only. The app is built around reviewing and sharing your running history, not collecting unrelated health data.
+            RunHeat requests read-only access to workout records from Apple Health and uses running workouts only. Imported Strava and Garmin records stay in local storage on your device, are not written to Apple Health, and are not sent to an external server.
           </p>
           <p>
             Health data permissions are managed by iOS, and you can change access at any time in the Health app or Settings.
